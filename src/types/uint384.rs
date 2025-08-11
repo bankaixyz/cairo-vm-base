@@ -5,9 +5,10 @@ use cairo_vm::{
     Felt252,
 };
 use num_bigint::BigUint;
+use serde::{Deserialize, Serialize};
 use crate::types::{FromHexStr, hex_bytes_padded};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct UInt384(pub BigUint);
 
 impl UInt384 {

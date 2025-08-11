@@ -4,10 +4,10 @@ use cairo_vm::{
     vm::{errors::hint_errors::HintError, vm_core::VirtualMachine},
     Felt252,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use crate::types::{FromHexStr, hex_bytes_padded};
 
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Felt(pub Felt252);
 
 impl CairoType for Felt {

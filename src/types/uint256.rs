@@ -5,10 +5,10 @@ use cairo_vm::{
     Felt252,
 };
 use num_bigint::BigUint;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use crate::types::{FromHexStr, hex_bytes_padded};
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Clone)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub struct Uint256(pub BigUint);
 
 impl Uint256 {
