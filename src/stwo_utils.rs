@@ -1,6 +1,6 @@
-use std::{io::Write, path::Path};
-use std::io;
 use bincode::enc::write::Writer;
+use std::io;
+use std::io::Write;
 
 pub struct FileWriter {
     buf_writer: io::BufWriter<std::fs::File>,

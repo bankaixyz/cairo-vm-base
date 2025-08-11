@@ -1,4 +1,5 @@
 use crate::cairo_type::CairoType;
+use crate::types::{hex_bytes_padded, FromAnyStr};
 use cairo_vm::{
     types::relocatable::Relocatable,
     vm::{errors::hint_errors::HintError, vm_core::VirtualMachine},
@@ -6,7 +7,6 @@ use cairo_vm::{
 };
 use num_bigint::BigUint;
 use serde::{Deserialize, Serialize};
-use crate::types::{FromHexStr, hex_bytes_padded};
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub struct Uint256(pub BigUint);
@@ -50,8 +50,14 @@ impl CairoType for Uint256 {
     }
 }
 
-impl FromHexStr for Uint256 {
-    fn from_hex_str(s: &str) -> Result<Self, String> {
+impl FromAnyStr for Uint256 {
+    fn from_any_str(s: &str) -> Result<Self, String> {
+        if !s.starts_with("0x") && !s.starts_with("0X") {
+            if let Some(value) = BigUint::parse_bytes(s.as_bytes(), 10) {
+                return Ok(Uint256(value));
+            }
+        }
+        // If it has a prefix or decimal parsing fails, treat as hex.
         let bytes = hex_bytes_padded(s, Some(32))?; // 256 bits
         Ok(Uint256(BigUint::from_bytes_be(&bytes)))
     }
