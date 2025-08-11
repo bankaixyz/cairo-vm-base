@@ -8,6 +8,7 @@ use std::collections::HashMap;
 
 pub mod debug;
 pub mod sha256;
+pub mod utils;
 
 pub type HintImpl = fn(
     &mut VirtualMachine,
@@ -27,5 +28,6 @@ pub fn default_hint_mapping() -> HashMap<String, HintImpl> {
     hints.insert(debug::PRINT_STRING.into(), debug::print_string);
     hints.insert(debug::PRINT_UINT256.into(), debug::print_uint256);
     hints.insert(debug::PRINT_UINT384.into(), debug::print_uint384);
+    hints.insert(utils::HINT_BIT_LENGTH.into(), utils::hint_bit_length);
     hints
 }
