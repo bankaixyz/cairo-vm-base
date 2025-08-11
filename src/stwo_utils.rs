@@ -23,14 +23,14 @@ impl Writer for FileWriter {
 }
 
 impl FileWriter {
-    fn new(buf_writer: io::BufWriter<std::fs::File>) -> Self {
+    pub fn new(buf_writer: io::BufWriter<std::fs::File>) -> Self {
         Self {
             buf_writer,
             bytes_written: 0,
         }
     }
 
-    fn flush(&mut self) -> io::Result<()> {
+    pub fn flush(&mut self) -> io::Result<()> {
         self.buf_writer.flush()
     }
 }
