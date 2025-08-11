@@ -16,3 +16,7 @@ alloy-primitives = "0.8.13"
 serde = { version = "1.0.215", features = ["derive"] }
 hex = "0.4"
 bincode = "2.0.1"
+
+[features]
+default = []
+serde = []
