@@ -2416,6 +2416,7 @@ name = "rust-vm-hints"
 version = "0.1.0"
 dependencies = [
  "alloy-primitives",
+ "bincode",
  "cairo-vm 2.0.1",
  "hex",
  "num-bigint",
