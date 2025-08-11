@@ -66,9 +66,16 @@ pub fn print_uint256(
     if let MaybeRelocatable::RelocatableValue(ptr) = ptr {
         let low = vm.get_integer((ptr + 0)?)?;
         let high = vm.get_integer((ptr + 1)?)?;
+        
+        let low_bytes = low.to_bytes_be();
+        let high_bytes = high.to_bytes_be();
+        
+        let low_128 = &low_bytes[low_bytes.len().saturating_sub(16)..];
+        let high_128 = &high_bytes[high_bytes.len().saturating_sub(16)..];
+        
         let mut bytes = Vec::new();
-        bytes.extend_from_slice(&high.to_bytes_be());
-        bytes.extend_from_slice(&low.to_bytes_be());
+        bytes.extend_from_slice(high_128);
+        bytes.extend_from_slice(low_128);
         println!("Value: 0x{}", hex::encode(bytes));
         return Ok(());
     }
@@ -98,21 +105,4 @@ pub fn print_uint384(
         println!("Value: 0x{}", hex::encode(bytes));
     }
     Ok(())
-}
-
-pub fn run_hint(
-    vm: &mut VirtualMachine,
-    exec_scope: &mut ExecutionScopes,
-    hint_data: &HintProcessorData,
-    constants: &HashMap<String, Felt252>,
-) -> Result<(), HintError> {
-    match hint_data.code.as_str() {
-        PRINT_FELT_HEX => print_felt_hex(vm, exec_scope, hint_data, constants),
-        PRINT_FELT => print_felt(vm, exec_scope, hint_data, constants),
-        PRINT_STRING => print_string(vm, exec_scope, hint_data, constants),
-        PRINT_UINT384 => print_uint384(vm, exec_scope, hint_data, constants),
-        _ => Err(HintError::UnknownHint(
-            hint_data.code.to_string().into_boxed_str(),
-        )),
-    }
 }
