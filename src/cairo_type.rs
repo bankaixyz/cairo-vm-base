@@ -13,3 +13,12 @@ pub trait CairoType: Sized + FromAnyStr {
     ) -> Result<Relocatable, HintError>;
     fn n_fields() -> usize;
 }
+
+pub trait CairoWritable: Sized {
+    fn to_memory(
+        &self,
+        vm: &mut VirtualMachine,
+        address: Relocatable,
+    ) -> Result<Relocatable, HintError>;
+    fn n_fields() -> usize;
+}
