@@ -1,5 +1,5 @@
 [package]
-name = "rust-vm-hints"
+name = "cairo-vm-base"
 version = "0.1.0"
 edition = "2021"
 
