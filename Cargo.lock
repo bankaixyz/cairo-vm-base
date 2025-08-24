@@ -964,6 +964,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "cairo-vm-base"
+version = "0.1.0"
+dependencies = [
+ "alloy-primitives",
+ "bincode",
+ "cairo-vm 2.0.1",
+ "hex",
+ "num-bigint",
+ "num-traits",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "cc"
 version = "1.2.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2409,20 +2423,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.104",
-]
-
-[[package]]
-name = "rust-vm-hints"
-version = "0.1.0"
-dependencies = [
- "alloy-primitives",
- "bincode",
- "cairo-vm 2.0.1",
- "hex",
- "num-bigint",
- "num-traits",
- "serde",
- "serde_json",
 ]
 
 [[package]]
