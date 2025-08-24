@@ -1,6 +1,10 @@
 pub mod felt;
 pub mod uint256;
 pub mod uint384;
+pub mod uint256_32;
+
+#[cfg(test)]
+mod tests;
 
 // Shared string parsing trait and helper
 pub trait FromAnyStr: Sized {
