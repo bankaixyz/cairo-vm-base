@@ -1,4 +1,4 @@
-use crate::cairo_type::CairoType;
+use crate::cairo_type::{BaseCairoType, CairoType};
 use crate::types::{hex_bytes_padded, FromAnyStr};
 use cairo_vm::{
     types::relocatable::Relocatable,
@@ -10,6 +10,12 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub struct Uint256(pub BigUint);
+
+impl BaseCairoType for Uint256 {
+    fn from_bytes_be(bytes: &[u8]) -> Self {
+        Uint256(BigUint::from_bytes_be(bytes))
+    }
+}
 
 impl Uint256 {
     pub fn to_limbs(&self) -> [Felt252; 2] {

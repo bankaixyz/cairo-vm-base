@@ -1,4 +1,4 @@
-use crate::cairo_type::CairoType;
+use crate::cairo_type::{BaseCairoType, CairoType};
 use crate::types::{hex_bytes_padded, FromAnyStr};
 use cairo_vm::{
     types::relocatable::Relocatable,
@@ -9,6 +9,12 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Felt(pub Felt252);
+
+impl BaseCairoType for Felt {
+    fn from_bytes_be(bytes: &[u8]) -> Self {
+        Felt(Felt252::from_bytes_be_slice(bytes))
+    }
+}
 
 impl CairoType for Felt {
     fn from_memory(vm: &VirtualMachine, address: Relocatable) -> Result<Self, HintError> {

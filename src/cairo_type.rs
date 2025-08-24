@@ -4,7 +4,11 @@ use cairo_vm::{
     vm::{errors::hint_errors::HintError, vm_core::VirtualMachine},
 };
 
-pub trait CairoType: Sized + FromAnyStr {
+pub trait BaseCairoType {
+    fn from_bytes_be(bytes: &[u8]) -> Self;
+}
+
+pub trait CairoType: Sized + FromAnyStr + BaseCairoType {
     fn from_memory(vm: &VirtualMachine, address: Relocatable) -> Result<Self, HintError>;
     fn to_memory(
         &self,
