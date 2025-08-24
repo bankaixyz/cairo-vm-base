@@ -6,7 +6,6 @@ use cairo_vm::{
     Felt252,
 };
 
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Felt(pub Felt252);
 

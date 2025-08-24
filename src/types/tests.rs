@@ -43,14 +43,20 @@ mod serde_tests {
         fn test_felt_serialize_hex() {
             let felt = felt::Felt(cairo_vm::Felt252::from(255));
             let json = serde_json::to_string(&felt).unwrap();
-            assert_eq!(json, "\"0x00000000000000000000000000000000000000000000000000000000000000ff\"");
+            assert_eq!(
+                json,
+                "\"0x00000000000000000000000000000000000000000000000000000000000000ff\""
+            );
         }
 
         #[test]
         fn test_uint256_serialize_hex() {
             let uint = uint256::Uint256(num_bigint::BigUint::from(255u32));
             let json = serde_json::to_string(&uint).unwrap();
-            assert_eq!(json, "\"0x00000000000000000000000000000000000000000000000000000000000000ff\"");
+            assert_eq!(
+                json,
+                "\"0x00000000000000000000000000000000000000000000000000000000000000ff\""
+            );
         }
 
         #[test]
@@ -65,27 +71,37 @@ mod serde_tests {
         fn test_uint256_bits32_serialize_hex() {
             let uint = uint256_32::Uint256Bits32(num_bigint::BigUint::from(255u32));
             let json = serde_json::to_string(&uint).unwrap();
-            assert_eq!(json, "\"0x00000000000000000000000000000000000000000000000000000000000000ff\"");
+            assert_eq!(
+                json,
+                "\"0x00000000000000000000000000000000000000000000000000000000000000ff\""
+            );
         }
 
         #[test]
         fn test_zero_values_serialize() {
             let felt_zero = felt::Felt(cairo_vm::Felt252::from(0));
             let uint256_zero = uint256::Uint256(num_bigint::BigUint::from(0u32));
-            
-            assert_eq!(serde_json::to_string(&felt_zero).unwrap(), "\"0x0000000000000000000000000000000000000000000000000000000000000000\"");
-            assert_eq!(serde_json::to_string(&uint256_zero).unwrap(), "\"0x0000000000000000000000000000000000000000000000000000000000000000\"");
+
+            assert_eq!(
+                serde_json::to_string(&felt_zero).unwrap(),
+                "\"0x0000000000000000000000000000000000000000000000000000000000000000\""
+            );
+            assert_eq!(
+                serde_json::to_string(&uint256_zero).unwrap(),
+                "\"0x0000000000000000000000000000000000000000000000000000000000000000\""
+            );
         }
 
         #[test]
         fn test_large_values_serialize() {
-            let large_val = num_bigint::BigUint::parse_bytes(b"123456789abcdef123456789abcdef", 16).unwrap();
+            let large_val =
+                num_bigint::BigUint::parse_bytes(b"123456789abcdef123456789abcdef", 16).unwrap();
             let uint256 = uint256::Uint256(large_val.clone());
             let uint384 = uint384::UInt384(large_val);
-            
+
             let json256 = serde_json::to_string(&uint256).unwrap();
             let json384 = serde_json::to_string(&uint384).unwrap();
-            
+
             // Should be hex strings with 0x prefix
             assert!(json256.starts_with("\"0x"));
             assert!(json384.starts_with("\"0x"));
@@ -93,7 +109,7 @@ mod serde_tests {
             assert!(json384.ends_with("\""));
         }
 
-        #[test] 
+        #[test]
         fn test_round_trip_serialization() {
             let original = uint256::Uint256(num_bigint::BigUint::from(12345u32));
             let json = serde_json::to_string(&original).unwrap();

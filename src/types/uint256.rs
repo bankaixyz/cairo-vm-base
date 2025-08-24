@@ -7,7 +7,6 @@ use cairo_vm::{
 };
 use num_bigint::BigUint;
 
-
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Uint256(pub BigUint);
 
