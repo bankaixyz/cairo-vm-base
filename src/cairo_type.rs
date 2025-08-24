@@ -6,6 +6,7 @@ use cairo_vm::{
 
 pub trait BaseCairoType {
     fn from_bytes_be(bytes: &[u8]) -> Self;
+    fn bytes_len() -> usize;
 }
 
 pub trait CairoType: Sized + FromAnyStr + BaseCairoType {

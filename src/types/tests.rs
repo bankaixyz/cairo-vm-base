@@ -1,45 +1,105 @@
-// Tests for serde deserialize_from_any functionality for all Cairo types
+// Tests for automatic deserialize functionality for all Cairo types
 // These tests ensure that all type implementations work correctly with:
 // - String inputs (hex with/without prefixes, decimal)
 // - Numeric inputs (JSON numbers)
 // - Edge cases (empty strings, invalid inputs, overflow)
 // - Vector deserialization for arrays of values
-//
-// All tests require the "serde" feature to be enabled.
-#[cfg(all(test, feature = "serde"))]
+#[cfg(test)]
 mod serde_tests {
-    use crate::types::{felt, serde_utils, uint256, uint256_32, uint384};
+    use crate::types::{felt, uint256, uint256_32, uint384};
     use serde::Deserialize;
 
-    // Test structs for deserialize_from_any functionality
+    // Test structs - now clean without any serde attributes!
     #[derive(Debug, Deserialize, PartialEq)]
     struct FeltWrapper {
-        #[serde(deserialize_with = "serde_utils::deserialize_from_any")]
         value: felt::Felt,
     }
 
     #[derive(Debug, Deserialize, PartialEq)]
     struct Uint256Wrapper {
-        #[serde(deserialize_with = "serde_utils::deserialize_from_any")]
         value: uint256::Uint256,
     }
 
     #[derive(Debug, Deserialize, PartialEq)]
     struct UInt384Wrapper {
-        #[serde(deserialize_with = "serde_utils::deserialize_from_any")]
         value: uint384::UInt384,
     }
 
     #[derive(Debug, Deserialize, PartialEq)]
     struct Uint256Bits32Wrapper {
-        #[serde(deserialize_with = "serde_utils::deserialize_from_any")]
         value: uint256_32::Uint256Bits32,
     }
 
     #[derive(Debug, Deserialize, PartialEq)]
     struct FeltVecWrapper {
-        #[serde(deserialize_with = "serde_utils::deserialize_vec_from_string")]
         values: Vec<felt::Felt>,
+    }
+
+    mod serialization_tests {
+        use super::*;
+        use serde_json;
+
+        #[test]
+        fn test_felt_serialize_hex() {
+            let felt = felt::Felt(cairo_vm::Felt252::from(255));
+            let json = serde_json::to_string(&felt).unwrap();
+            assert_eq!(json, "\"0x00000000000000000000000000000000000000000000000000000000000000ff\"");
+        }
+
+        #[test]
+        fn test_uint256_serialize_hex() {
+            let uint = uint256::Uint256(num_bigint::BigUint::from(255u32));
+            let json = serde_json::to_string(&uint).unwrap();
+            assert_eq!(json, "\"0x00000000000000000000000000000000000000000000000000000000000000ff\"");
+        }
+
+        #[test]
+        fn test_uint384_serialize_hex() {
+            let uint = uint384::UInt384(num_bigint::BigUint::from(255u32));
+            let json = serde_json::to_string(&uint).unwrap();
+            // UInt384 = 48 bytes = 96 hex chars + "0x" prefix
+            assert_eq!(json, "\"0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ff\"");
+        }
+
+        #[test]
+        fn test_uint256_bits32_serialize_hex() {
+            let uint = uint256_32::Uint256Bits32(num_bigint::BigUint::from(255u32));
+            let json = serde_json::to_string(&uint).unwrap();
+            assert_eq!(json, "\"0x00000000000000000000000000000000000000000000000000000000000000ff\"");
+        }
+
+        #[test]
+        fn test_zero_values_serialize() {
+            let felt_zero = felt::Felt(cairo_vm::Felt252::from(0));
+            let uint256_zero = uint256::Uint256(num_bigint::BigUint::from(0u32));
+            
+            assert_eq!(serde_json::to_string(&felt_zero).unwrap(), "\"0x0000000000000000000000000000000000000000000000000000000000000000\"");
+            assert_eq!(serde_json::to_string(&uint256_zero).unwrap(), "\"0x0000000000000000000000000000000000000000000000000000000000000000\"");
+        }
+
+        #[test]
+        fn test_large_values_serialize() {
+            let large_val = num_bigint::BigUint::parse_bytes(b"123456789abcdef123456789abcdef", 16).unwrap();
+            let uint256 = uint256::Uint256(large_val.clone());
+            let uint384 = uint384::UInt384(large_val);
+            
+            let json256 = serde_json::to_string(&uint256).unwrap();
+            let json384 = serde_json::to_string(&uint384).unwrap();
+            
+            // Should be hex strings with 0x prefix
+            assert!(json256.starts_with("\"0x"));
+            assert!(json384.starts_with("\"0x"));
+            assert!(json256.ends_with("\""));
+            assert!(json384.ends_with("\""));
+        }
+
+        #[test] 
+        fn test_round_trip_serialization() {
+            let original = uint256::Uint256(num_bigint::BigUint::from(12345u32));
+            let json = serde_json::to_string(&original).unwrap();
+            let deserialized: uint256::Uint256 = serde_json::from_str(&json).unwrap();
+            assert_eq!(original, deserialized);
+        }
     }
 
     mod felt_tests {

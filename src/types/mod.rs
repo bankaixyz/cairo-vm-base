@@ -39,7 +39,6 @@ pub fn hex_bytes_padded(input: &str, target_len: Option<usize>) -> Result<Vec<u8
     Ok(bytes)
 }
 
-#[cfg(feature = "serde")]
 pub mod serde_utils {
     //! Serde helpers for deserializing types that implement `FromAnyStr`.
 
@@ -47,29 +46,6 @@ pub mod serde_utils {
     use serde::de::{self, Deserializer, Visitor};
     use serde::Deserialize;
     use std::fmt;
-
-    /// Deserialize any type implementing FromAnyStr from a JSON string
-    pub fn deserialize_from_string<'de, D, T>(deserializer: D) -> Result<T, D::Error>
-    where
-        D: Deserializer<'de>,
-        T: FromAnyStr,
-    {
-        let s = String::deserialize(deserializer)?;
-        T::from_any_str(&s).map_err(de::Error::custom)
-    }
-
-    /// Deserialize a vector of types implementing FromAnyStr from JSON string array
-    pub fn deserialize_vec_from_string<'de, D, T>(deserializer: D) -> Result<Vec<T>, D::Error>
-    where
-        D: Deserializer<'de>,
-        T: FromAnyStr,
-    {
-        let ss: Vec<String> = Vec::deserialize(deserializer)?;
-        ss.into_iter()
-            .map(|s| T::from_any_str(&s))
-            .collect::<Result<Vec<T>, _>>()
-            .map_err(de::Error::custom)
-    }
 
     struct AnyStrVisitor<T>(std::marker::PhantomData<T>);
 
@@ -96,6 +72,16 @@ pub mod serde_utils {
         {
             T::from_any_str(&value.to_string()).map_err(de::Error::custom)
         }
+
+        fn visit_i64<E>(self, value: i64) -> Result<Self::Value, E>
+        where
+            E: de::Error,
+        {
+            if value < 0 {
+                return Err(de::Error::custom("negative values not supported"));
+            }
+            T::from_any_str(&value.to_string()).map_err(de::Error::custom)
+        }
     }
 
     /// Deserialize any type implementing FromAnyStr from either a JSON string or number
@@ -105,5 +91,15 @@ pub mod serde_utils {
         T: FromAnyStr,
     {
         deserializer.deserialize_any(AnyStrVisitor(std::marker::PhantomData))
+    }
+
+    /// Deserialize a vector of types that have custom Deserialize implementations
+    /// This works with any type T that implements Deserialize, including our Cairo types
+    pub fn deserialize_vec<'de, D, T>(deserializer: D) -> Result<Vec<T>, D::Error>
+    where
+        D: Deserializer<'de>,
+        T: Deserialize<'de>,
+    {
+        Vec::<T>::deserialize(deserializer)
     }
 }

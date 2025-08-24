@@ -6,14 +6,21 @@ use cairo_vm::{
     Felt252,
 };
 use num_bigint::BigUint;
-use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UInt384(pub BigUint);
 
 impl BaseCairoType for UInt384 {
     fn from_bytes_be(bytes: &[u8]) -> Self {
+        if bytes.len() != 48 {
+            panic!("Invalid bytes length for UInt384");
+        }
         UInt384(BigUint::from_bytes_be(bytes))
+    }
+
+    fn bytes_len() -> usize {
+        48
     }
 }
 
@@ -73,5 +80,28 @@ impl FromAnyStr for UInt384 {
         // If it has a prefix or decimal parsing fails, treat as hex.
         let bytes = hex_bytes_padded(s, Some(48))?; // 384 bits
         Ok(UInt384(BigUint::from_bytes_be(&bytes)))
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for UInt384 {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        crate::types::serde_utils::deserialize_from_any(deserializer)
+    }
+}
+
+impl serde::Serialize for UInt384 {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let bytes = self.0.to_bytes_be();
+        let mut padded_bytes = vec![0u8; 48]; // 384 bits = 48 bytes
+        let start = 48 - bytes.len();
+        padded_bytes[start..].copy_from_slice(&bytes);
+        let hex = hex::encode(padded_bytes);
+        serializer.serialize_str(&format!("0x{}", hex))
     }
 }
