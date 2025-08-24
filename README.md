@@ -21,12 +21,27 @@ use rust_vm_hints::cairo_vm;
 
 The library re-exports the cairo-vm crate with features enabled for extensive hints, Cairo 1 support, and modular builtins.
 
-### CairoType Trait
+### Type System
 
-The `CairoType` trait provides a standardized interface for reading from and writing to Cairo VM memory:
+The library provides a comprehensive type system with two core traits:
+
+#### BaseCairoType Trait
+
+The `BaseCairoType` trait defines the fundamental operations for Cairo types:
 
 ```rust
-pub trait CairoType: Sized + FromAnyStr {
+pub trait BaseCairoType {
+    fn from_bytes_be(bytes: &[u8]) -> Self;
+    fn bytes_len() -> usize;
+}
+```
+
+#### CairoType Trait
+
+The `CairoType` trait extends `BaseCairoType` with VM memory operations:
+
+```rust
+pub trait CairoType: Sized + FromAnyStr + BaseCairoType {
     fn from_memory(vm: &VirtualMachine, address: Relocatable) -> Result<Self, HintError>;
     fn to_memory(&self, vm: &mut VirtualMachine, address: Relocatable) -> Result<Relocatable, HintError>;
     fn n_fields() -> usize;
@@ -35,11 +50,15 @@ pub trait CairoType: Sized + FromAnyStr {
 
 #### Implemented Types
 
-- **`Felt`** - Cairo field element wrapper
-- **`Uint256`** - 256-bit unsigned integer with limb-based memory layout
-- **`Uint384`** - 384-bit unsigned integer for cryptographic operations
+- **`Felt`** - Cairo field element wrapper (32 bytes)
+- **`Uint256`** - 256-bit unsigned integer with limb-based memory layout (32 bytes)
+- **`UInt384`** - 384-bit unsigned integer for cryptographic operations (48 bytes) 
+- **`Uint256Bits32`** - 256-bit unsigned integer with 32-bit limbs (32 bytes)
 
-All types support flexible string parsing (hex with `0x` prefix or decimal) and optional serde serialization with powerful parsing utilities.
+All types include:
+- **Byte length validation** - `from_bytes_be()` validates input length matches expected size
+- **Flexible string parsing** - Support hex (`0x` prefix) and decimal formats
+- **Automatic serde integration** - Clean serialization/deserialization without attributes
 
 ### Default Hints
 
@@ -57,79 +76,61 @@ The library provides a comprehensive set of built-in hints accessible via `defau
 #### Utility Hints
 - `hint_bit_length` - Calculate bit length of values
 
-### Serde Integration
+### Automatic Serde Integration
 
-The library provides powerful serde integration with three parsing strategies for JSON deserialization:
-
-#### 1. String-only Parsing
-Use `deserialize_from_string` to parse values only from JSON strings:
+All Cairo types (`Felt`, `Uint256`, `UInt384`, `Uint256Bits32`) automatically support flexible JSON serialization and deserialization without any attributes needed:
 
 ```rust
-use serde::Deserialize;
-use rust_vm_hints::types::{felt::Felt, serde_utils::deserialize_from_string};
+use serde::{Deserialize, Serialize};
+use rust_vm_hints::types::{felt::Felt, uint256::Uint256};
 
-#[derive(Deserialize)]
-struct Config {
-    #[serde(deserialize_with = "deserialize_from_string")]
-    pub value: Felt,
+#[derive(Deserialize, Serialize)]
+struct BeaconHeaderCairo {
+    pub slot: Uint256,           // ✨ No serde attributes needed!
+    pub proposer_index: Uint256,
+    pub parent_root: Uint256,
+    pub state_root: Uint256,
+    pub body_root: Uint256,
 }
 ```
 
-JSON input:
+#### Flexible Deserialization
+
+All types automatically accept multiple input formats:
+- **JSON Strings**: `"0x1a2b3c"`, `"123"`, `"0xFF"`
+- **JSON Numbers**: `123`, `0xFF`
+- **Mixed Arrays**: `["0x1a2b3c", 123, "999"]`
+
+#### Full-Padding Serialization
+
+All types serialize to fully-padded hex strings for consistency:
+- **`Felt`** → `"0x00000000000000000000000000000000000000000000000000000000000000ff"`
+- **`Uint256`** → `"0x00000000000000000000000000000000000000000000000000000000000000ff"`
+- **`UInt384`** → `"0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ff"`
+
+#### Example JSON
+
 ```json
-{"value": "0x1a2b3c"}  ✓ Works
-{"value": "123"}       ✓ Works  
-{"value": 123}         ✗ Error - only strings accepted
-```
-
-#### 2. Flexible Parsing (String or Number)
-Use `deserialize_from_any` to accept both JSON strings and numbers:
-
-```rust
-#[derive(Deserialize)]
-struct Config {
-    #[serde(deserialize_with = "deserialize_from_any")]
-    pub value: Felt,
+{
+  "slot": "0x1a2b3c",         ✓ Hex string input
+  "proposer_index": 123,      ✓ JSON number input  
+  "parent_root": "999",       ✓ Decimal string input
+  "values": [
+    "0x1a2b3c",              ✓ Arrays work automatically
+    123,
+    "999"
+  ]
 }
 ```
 
-JSON input:
-```json
-{"value": "0x1a2b3c"}  ✓ Works
-{"value": "123"}       ✓ Works
-{"value": 123}         ✓ Works - number converted to string
-```
+#### Round-trip Compatibility
 
-#### 3. Vector Parsing
-Use `deserialize_vec_from_string` for arrays of values:
-
+Serialization and deserialization are fully compatible:
 ```rust
-#[derive(Deserialize)]
-struct Config {
-    #[serde(deserialize_with = "deserialize_vec_from_string")]
-    pub values: Vec<Felt>,
-}
-```
-
-JSON input:
-```json
-{"values": ["0x1a2b3c", "123", "0xFF"]}
-```
-
-#### Supported Formats
-
-All parsing functions support multiple input formats:
-- **Hexadecimal**: `"0x1a2b3c"`, `"0X1A2B3C"` 
-- **Decimal**: `"123"`, `"999"`
-- **Numbers** (with `deserialize_from_any`): `123`, `0xFF`
-
-#### Feature Flag
-
-Enable serde support in your `Cargo.toml`:
-
-```toml
-[dependencies]
-rust-vm-hints = { path = "path/to/cairo-vm-base", features = ["serde"] }
+let original = Uint256::from_any_str("255")?;
+let json = serde_json::to_string(&original)?;  // "0x00...ff"
+let restored: Uint256 = serde_json::from_str(&json)?;
+assert_eq!(original, restored);
 ```
 
 ### Other Utilities
@@ -172,8 +173,8 @@ This library is designed to be used as a dependency in larger Cairo projects, pr
 ## Dependencies
 
 - `cairo-vm` v2.0.1 - Core Cairo Virtual Machine
-- `num-bigint` / `num-traits` - Large integer arithmetic
-- `serde` - Serialization (optional)
+- `num-bigint` / `num-traits` - Large integer arithmetic  
+- `serde` - JSON serialization/deserialization
 - `hex` / `bincode` - Data encoding utilities
 
 ## License
