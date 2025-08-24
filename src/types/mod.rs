@@ -1,7 +1,7 @@
 pub mod felt;
 pub mod uint256;
-pub mod uint384;
 pub mod uint256_32;
+pub mod uint384;
 
 #[cfg(test)]
 mod tests;

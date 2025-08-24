@@ -8,9 +8,9 @@
 // All tests require the "serde" feature to be enabled.
 #[cfg(all(test, feature = "serde"))]
 mod serde_tests {
-    use crate::types::{felt, uint256, uint384, uint256_32, serde_utils};
+    use crate::types::{felt, serde_utils, uint256, uint256_32, uint384};
     use serde::Deserialize;
-    
+
     // Test structs for deserialize_from_any functionality
     #[derive(Debug, Deserialize, PartialEq)]
     struct FeltWrapper {
@@ -201,7 +201,7 @@ mod serde_tests {
             let json = r#"{"value": "123456789012345678901234567890"}"#;
             let wrapper: UInt384Wrapper = serde_json::from_str(json).unwrap();
             let expected = uint384::UInt384(
-                BigUint::parse_bytes(b"123456789012345678901234567890", 10).unwrap()
+                BigUint::parse_bytes(b"123456789012345678901234567890", 10).unwrap(),
             );
             assert_eq!(wrapper.value, expected);
         }
@@ -382,7 +382,7 @@ mod serde_tests {
         fn test_all_types_with_same_value() {
             let value_str = "12345";
             let value_num = 12345u64;
-            
+
             // Test Felt
             let felt_json = format!(r#"{{"value": "{}"}}"#, value_str);
             let felt_wrapper: FeltWrapper = serde_json::from_str(&felt_json).unwrap();
@@ -395,29 +395,51 @@ mod serde_tests {
             // Test Uint256
             let uint256_json = format!(r#"{{"value": "{}"}}"#, value_str);
             let uint256_wrapper: Uint256Wrapper = serde_json::from_str(&uint256_json).unwrap();
-            assert_eq!(uint256_wrapper.value, uint256::Uint256(num_bigint::BigUint::from(value_num)));
+            assert_eq!(
+                uint256_wrapper.value,
+                uint256::Uint256(num_bigint::BigUint::from(value_num))
+            );
 
             let uint256_json_num = format!(r#"{{"value": {}}}"#, value_num);
-            let uint256_wrapper_num: Uint256Wrapper = serde_json::from_str(&uint256_json_num).unwrap();
-            assert_eq!(uint256_wrapper_num.value, uint256::Uint256(num_bigint::BigUint::from(value_num)));
+            let uint256_wrapper_num: Uint256Wrapper =
+                serde_json::from_str(&uint256_json_num).unwrap();
+            assert_eq!(
+                uint256_wrapper_num.value,
+                uint256::Uint256(num_bigint::BigUint::from(value_num))
+            );
 
             // Test UInt384
             let uint384_json = format!(r#"{{"value": "{}"}}"#, value_str);
             let uint384_wrapper: UInt384Wrapper = serde_json::from_str(&uint384_json).unwrap();
-            assert_eq!(uint384_wrapper.value, uint384::UInt384(num_bigint::BigUint::from(value_num)));
+            assert_eq!(
+                uint384_wrapper.value,
+                uint384::UInt384(num_bigint::BigUint::from(value_num))
+            );
 
             let uint384_json_num = format!(r#"{{"value": {}}}"#, value_num);
-            let uint384_wrapper_num: UInt384Wrapper = serde_json::from_str(&uint384_json_num).unwrap();
-            assert_eq!(uint384_wrapper_num.value, uint384::UInt384(num_bigint::BigUint::from(value_num)));
+            let uint384_wrapper_num: UInt384Wrapper =
+                serde_json::from_str(&uint384_json_num).unwrap();
+            assert_eq!(
+                uint384_wrapper_num.value,
+                uint384::UInt384(num_bigint::BigUint::from(value_num))
+            );
 
             // Test Uint256Bits32
             let uint256_32_json = format!(r#"{{"value": "{}"}}"#, value_str);
-            let uint256_32_wrapper: Uint256Bits32Wrapper = serde_json::from_str(&uint256_32_json).unwrap();
-            assert_eq!(uint256_32_wrapper.value, uint256_32::Uint256Bits32(num_bigint::BigUint::from(value_num)));
+            let uint256_32_wrapper: Uint256Bits32Wrapper =
+                serde_json::from_str(&uint256_32_json).unwrap();
+            assert_eq!(
+                uint256_32_wrapper.value,
+                uint256_32::Uint256Bits32(num_bigint::BigUint::from(value_num))
+            );
 
             let uint256_32_json_num = format!(r#"{{"value": {}}}"#, value_num);
-            let uint256_32_wrapper_num: Uint256Bits32Wrapper = serde_json::from_str(&uint256_32_json_num).unwrap();
-            assert_eq!(uint256_32_wrapper_num.value, uint256_32::Uint256Bits32(num_bigint::BigUint::from(value_num)));
+            let uint256_32_wrapper_num: Uint256Bits32Wrapper =
+                serde_json::from_str(&uint256_32_json_num).unwrap();
+            assert_eq!(
+                uint256_32_wrapper_num.value,
+                uint256_32::Uint256Bits32(num_bigint::BigUint::from(value_num))
+            );
         }
     }
 }

@@ -66,13 +66,13 @@ pub fn print_uint256(
     if let MaybeRelocatable::RelocatableValue(ptr) = ptr {
         let low = vm.get_integer((ptr + 0)?)?;
         let high = vm.get_integer((ptr + 1)?)?;
-        
+
         let low_bytes = low.to_bytes_be();
         let high_bytes = high.to_bytes_be();
-        
+
         let low_128 = &low_bytes[low_bytes.len().saturating_sub(16)..];
         let high_128 = &high_bytes[high_bytes.len().saturating_sub(16)..];
-        
+
         let mut bytes = Vec::new();
         bytes.extend_from_slice(high_128);
         bytes.extend_from_slice(low_128);
