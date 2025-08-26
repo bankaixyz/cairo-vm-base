@@ -13,7 +13,10 @@ pub struct Uint256Bits32(pub BigUint);
 impl BaseCairoType for Uint256Bits32 {
     fn from_bytes_be(bytes: &[u8]) -> Self {
         if bytes.len() > 32 {
-            panic!("Invalid bytes length for Uint256Bits32. Expected 32 bytes, got {}", bytes.len());
+            panic!(
+                "Invalid bytes length for Uint256Bits32. Expected 32 bytes, got {}",
+                bytes.len()
+            );
         }
         Uint256Bits32(BigUint::from_bytes_be(bytes))
     }
@@ -42,10 +45,13 @@ impl Uint256Bits32 {
 
 impl CairoType for Uint256Bits32 {
     fn from_memory(vm: &VirtualMachine, address: Relocatable) -> Result<Self, HintError> {
+        // Get the pointer to the limbs segment
+        let limbs_address = vm.get_relocatable(address)?;
         let mut bigint = BigUint::from(0u32);
 
         for i in (0..8).rev() {
-            let value = BigUint::from_bytes_be(&vm.get_integer((address + i)?)?.to_bytes_be());
+            let value =
+                BigUint::from_bytes_be(&vm.get_integer((limbs_address + i)?)?.to_bytes_be());
             bigint = (bigint << 32) | value;
         }
 
@@ -57,17 +63,24 @@ impl CairoType for Uint256Bits32 {
         vm: &mut VirtualMachine,
         address: Relocatable,
     ) -> Result<Relocatable, HintError> {
-        let limbs = self.to_limbs();
+        // Create a new segment for the limbs
+        let limbs_segment = vm.add_memory_segment();
 
+        // Write the 8 limbs to the new segment
+        let limbs = self.to_limbs();
         for (i, limb) in limbs.iter().enumerate() {
-            vm.insert_value((address + i)?, *limb)?;
+            vm.insert_value((limbs_segment + i)?, *limb)?;
         }
 
-        Ok((address + 8)?)
+        // Store a pointer to the new segment at the original address
+        vm.insert_value(address, limbs_segment)?;
+
+        // Return the address after the pointer
+        Ok((address + 1)?)
     }
 
     fn n_fields() -> usize {
-        8
+        1
     }
 }
 

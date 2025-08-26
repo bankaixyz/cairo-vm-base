@@ -13,7 +13,10 @@ pub struct Uint256(pub BigUint);
 impl BaseCairoType for Uint256 {
     fn from_bytes_be(bytes: &[u8]) -> Self {
         if bytes.len() > 32 {
-            panic!("Invalid bytes length for Uint256. Expected 32 bytes, got {}", bytes.len());
+            panic!(
+                "Invalid bytes length for Uint256. Expected 32 bytes, got {}",
+                bytes.len()
+            );
         }
         Uint256(BigUint::from_bytes_be(bytes))
     }
