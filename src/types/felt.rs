@@ -11,7 +11,7 @@ pub struct Felt(pub Felt252);
 
 impl BaseCairoType for Felt {
     fn from_bytes_be(bytes: &[u8]) -> Self {
-        if bytes.len() != 32 {
+        if bytes.len() > 32 {
             panic!("Invalid bytes length for Felt");
         }
         Felt(Felt252::from_bytes_be_slice(bytes))

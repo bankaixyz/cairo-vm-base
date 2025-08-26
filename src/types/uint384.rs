@@ -12,8 +12,8 @@ pub struct UInt384(pub BigUint);
 
 impl BaseCairoType for UInt384 {
     fn from_bytes_be(bytes: &[u8]) -> Self {
-        if bytes.len() != 48 {
-            panic!("Invalid bytes length for UInt384");
+        if bytes.len() > 48 {
+            panic!("Invalid bytes length for UInt384. Expected 48 bytes, got {}", bytes.len());
         }
         UInt384(BigUint::from_bytes_be(bytes))
     }
