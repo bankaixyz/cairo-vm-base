@@ -127,7 +127,7 @@ pub fn info_felt(
 ) -> Result<(), HintError> {
     let log_level = exec_scopes
         .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+        .unwrap_or("info");
     if log_level == "info" || log_level == "debug" {
         let value =
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -144,7 +144,7 @@ pub fn info_felt_hex(
 ) -> Result<(), HintError> {
     let log_level = exec_scopes
         .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+        .unwrap_or("info");
     if log_level == "info" || log_level == "debug" {
         let value =
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -161,7 +161,7 @@ pub fn info_string(
 ) -> Result<(), HintError> {
     let log_level = exec_scopes
         .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+        .unwrap_or("info");
     if log_level == "info" || log_level == "debug" {
         let value =
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -180,7 +180,7 @@ pub fn info_uint256(
 ) -> Result<(), HintError> {
     let log_level = exec_scopes
         .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+        .unwrap_or("info");
     if log_level == "info" || log_level == "debug" {
         let ptr: MaybeRelocatable =
             get_address_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -215,7 +215,7 @@ pub fn info_uint384(
 ) -> Result<(), HintError> {
     let log_level = exec_scopes
         .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+        .unwrap_or("info");
     if log_level == "info" || log_level == "debug" {
         let ptr: MaybeRelocatable =
             get_address_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -243,7 +243,7 @@ pub fn debug_felt(
 ) -> Result<(), HintError> {
     let log_level = exec_scopes
         .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+        .unwrap_or("info");
     if log_level == "debug" {
         let value =
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -260,7 +260,7 @@ pub fn debug_felt_hex(
 ) -> Result<(), HintError> {
     let log_level = exec_scopes
         .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+        .unwrap_or("info");
     if log_level == "debug" {
         let value =
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -277,7 +277,7 @@ pub fn debug_string(
 ) -> Result<(), HintError> {
     let log_level = exec_scopes
         .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+        .unwrap_or("info");
     if log_level == "debug" {
         let value =
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -296,7 +296,7 @@ pub fn debug_uint256(
 ) -> Result<(), HintError> {
     let log_level = exec_scopes
         .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+        .unwrap_or("info");
     if log_level == "debug" {
         let ptr: MaybeRelocatable =
             get_address_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -331,7 +331,7 @@ pub fn debug_uint384(
 ) -> Result<(), HintError> {
     let log_level = exec_scopes
         .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+        .unwrap_or("info");
     if log_level == "debug" {
         let ptr: MaybeRelocatable =
             get_address_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
