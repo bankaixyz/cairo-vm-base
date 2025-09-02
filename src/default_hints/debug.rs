@@ -125,9 +125,7 @@ pub fn info_felt(
     hint_data: &HintProcessorData,
     _constants: &HashMap<String, Felt252>,
 ) -> Result<(), HintError> {
-    let log_level = exec_scopes
-        .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+    let log_level = exec_scopes.get::<&str>("LOG_LEVEL_CAIRO").unwrap_or("info");
     if log_level == "info" || log_level == "debug" {
         let value =
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -142,9 +140,7 @@ pub fn info_felt_hex(
     hint_data: &HintProcessorData,
     _constants: &HashMap<String, Felt252>,
 ) -> Result<(), HintError> {
-    let log_level = exec_scopes
-        .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+    let log_level = exec_scopes.get::<&str>("LOG_LEVEL_CAIRO").unwrap_or("info");
     if log_level == "info" || log_level == "debug" {
         let value =
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -159,9 +155,7 @@ pub fn info_string(
     hint_data: &HintProcessorData,
     _constants: &HashMap<String, Felt252>,
 ) -> Result<(), HintError> {
-    let log_level = exec_scopes
-        .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+    let log_level = exec_scopes.get::<&str>("LOG_LEVEL_CAIRO").unwrap_or("info");
     if log_level == "info" || log_level == "debug" {
         let value =
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -178,9 +172,7 @@ pub fn info_uint256(
     hint_data: &HintProcessorData,
     _constants: &HashMap<String, Felt252>,
 ) -> Result<(), HintError> {
-    let log_level = exec_scopes
-        .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+    let log_level = exec_scopes.get::<&str>("LOG_LEVEL_CAIRO").unwrap_or("info");
     if log_level == "info" || log_level == "debug" {
         let ptr: MaybeRelocatable =
             get_address_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -213,9 +205,7 @@ pub fn info_uint384(
     hint_data: &HintProcessorData,
     _constants: &HashMap<String, Felt252>,
 ) -> Result<(), HintError> {
-    let log_level = exec_scopes
-        .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+    let log_level = exec_scopes.get::<&str>("LOG_LEVEL_CAIRO").unwrap_or("info");
     if log_level == "info" || log_level == "debug" {
         let ptr: MaybeRelocatable =
             get_address_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -241,9 +231,7 @@ pub fn debug_felt(
     hint_data: &HintProcessorData,
     _constants: &HashMap<String, Felt252>,
 ) -> Result<(), HintError> {
-    let log_level = exec_scopes
-        .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+    let log_level = exec_scopes.get::<&str>("LOG_LEVEL_CAIRO").unwrap_or("info");
     if log_level == "debug" {
         let value =
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -258,9 +246,7 @@ pub fn debug_felt_hex(
     hint_data: &HintProcessorData,
     _constants: &HashMap<String, Felt252>,
 ) -> Result<(), HintError> {
-    let log_level = exec_scopes
-        .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+    let log_level = exec_scopes.get::<&str>("LOG_LEVEL_CAIRO").unwrap_or("info");
     if log_level == "debug" {
         let value =
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -275,9 +261,7 @@ pub fn debug_string(
     hint_data: &HintProcessorData,
     _constants: &HashMap<String, Felt252>,
 ) -> Result<(), HintError> {
-    let log_level = exec_scopes
-        .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+    let log_level = exec_scopes.get::<&str>("LOG_LEVEL_CAIRO").unwrap_or("info");
     if log_level == "debug" {
         let value =
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -294,9 +278,7 @@ pub fn debug_uint256(
     hint_data: &HintProcessorData,
     _constants: &HashMap<String, Felt252>,
 ) -> Result<(), HintError> {
-    let log_level = exec_scopes
-        .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+    let log_level = exec_scopes.get::<&str>("LOG_LEVEL_CAIRO").unwrap_or("info");
     if log_level == "debug" {
         let ptr: MaybeRelocatable =
             get_address_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
@@ -329,9 +311,7 @@ pub fn debug_uint384(
     hint_data: &HintProcessorData,
     _constants: &HashMap<String, Felt252>,
 ) -> Result<(), HintError> {
-    let log_level = exec_scopes
-        .get::<String>("LOG_LEVEL_CAIRO")
-        .unwrap_or_default();
+    let log_level = exec_scopes.get::<&str>("LOG_LEVEL_CAIRO").unwrap_or("info");
     if log_level == "debug" {
         let ptr: MaybeRelocatable =
             get_address_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
