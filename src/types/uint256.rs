@@ -55,7 +55,6 @@ impl CairoType for Uint256 {
         address: Relocatable,
     ) -> Result<Relocatable, HintError> {
         let limbs = self.to_limbs();
-        println!("limbs: {:?}", limbs);
         vm.insert_value((address + 0)?, limbs[0])?;
         vm.insert_value((address + 1)?, limbs[1])?;
         Ok((address + 2)?)
