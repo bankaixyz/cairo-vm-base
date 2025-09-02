@@ -29,5 +29,18 @@ pub fn default_hint_mapping() -> HashMap<String, HintImpl> {
     hints.insert(debug::PRINT_UINT256.into(), debug::print_uint256);
     hints.insert(debug::PRINT_UINT384.into(), debug::print_uint384);
     hints.insert(utils::HINT_BIT_LENGTH.into(), utils::hint_bit_length);
+
+    hints.insert(debug::INFO_FELT.into(), debug::info_felt);
+    hints.insert(debug::INFO_FELT_HEX.into(), debug::info_felt_hex);
+    hints.insert(debug::INFO_STRING.into(), debug::info_string);
+    hints.insert(debug::INFO_UINT256.into(), debug::info_uint256);
+    hints.insert(debug::INFO_UINT384.into(), debug::info_uint384);
+
+    hints.insert(debug::DEBUG_FELT.into(), debug::debug_felt);
+    hints.insert(debug::DEBUG_FELT_HEX.into(), debug::debug_felt_hex);
+    hints.insert(debug::DEBUG_STRING.into(), debug::debug_string);
+    hints.insert(debug::DEBUG_UINT256.into(), debug::debug_uint256);
+    hints.insert(debug::DEBUG_UINT384.into(), debug::debug_uint384);
+
     hints
 }
