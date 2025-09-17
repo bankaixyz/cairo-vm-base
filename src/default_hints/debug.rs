@@ -37,7 +37,7 @@ pub fn print_felt(
 ) -> Result<(), HintError> {
     let value =
         get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
-    println!("Value: {}", value);
+    println!("Value: {value}");
     Ok(())
 }
 
@@ -51,7 +51,7 @@ pub fn print_string(
         get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
     let bytes = value.to_bytes_be();
     let ascii = String::from_utf8_lossy(&bytes);
-    println!("String: {}", ascii);
+    println!("String: {ascii}");
     Ok(())
 }
 
@@ -129,7 +129,7 @@ pub fn info_felt(
     if log_level == "info" || log_level == "debug" {
         let value =
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
-        println!("Info: {}", value);
+        println!("Info: {value}");
     }
     Ok(())
 }
@@ -161,7 +161,7 @@ pub fn info_string(
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
         let bytes = value.to_bytes_be();
         let ascii = String::from_utf8_lossy(&bytes);
-        println!("Info: {}", ascii);
+        println!("Info: {ascii}");
     }
     Ok(())
 }
@@ -235,7 +235,7 @@ pub fn debug_felt(
     if log_level == "debug" {
         let value =
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
-        println!("Debug: {}", value);
+        println!("Debug: {value}");
     }
     Ok(())
 }
@@ -267,7 +267,7 @@ pub fn debug_string(
             get_integer_from_var_name("value", vm, &hint_data.ids_data, &hint_data.ap_tracking)?;
         let bytes = value.to_bytes_be();
         let ascii = String::from_utf8_lossy(&bytes);
-        println!("Debug: {}", ascii);
+        println!("Debug: {ascii}");
     }
     Ok(())
 }

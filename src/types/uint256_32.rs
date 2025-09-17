@@ -116,6 +116,6 @@ impl serde::Serialize for Uint256Bits32 {
         let start = 32 - bytes.len();
         padded_bytes[start..].copy_from_slice(&bytes);
         let hex = hex::encode(padded_bytes);
-        serializer.serialize_str(&format!("0x{}", hex))
+        serializer.serialize_str(&format!("0x{hex}"))
     }
 }

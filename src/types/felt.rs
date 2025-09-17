@@ -71,6 +71,6 @@ impl serde::Serialize for Felt {
     {
         let bytes = self.0.to_bytes_be();
         let hex = hex::encode(bytes);
-        serializer.serialize_str(&format!("0x{}", hex))
+        serializer.serialize_str(&format!("0x{hex}"))
     }
 }
