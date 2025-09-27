@@ -9,9 +9,10 @@ use cairo_vm::{
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct KeccakBytes(pub Vec<u8>);
 
+// Le 64 bit chunks of a byte vec for efficient keccak hash computation in cairo
 impl KeccakBytes {
     pub fn to_limbs(&self) -> Vec<Felt252> {
-        let mut result: Vec<Felt252> = Vec::with_capacity((self.0.len() + 7) / 8);
+        let mut result: Vec<Felt252> = Vec::with_capacity(self.0.len().div_ceil(8));
         for chunk in self.0.chunks(8) {
             let mut buf = [0u8; 8];
             // Copy chunk bytes as-is; interpret as little-endian u64
@@ -26,7 +27,11 @@ impl KeccakBytes {
 }
 
 impl CairoWritable for KeccakBytes {
-    fn to_memory(&self, vm: &mut VirtualMachine, address: Relocatable) -> Result<Relocatable, HintError> {
+    fn to_memory(
+        &self,
+        vm: &mut VirtualMachine,
+        address: Relocatable,
+    ) -> Result<Relocatable, HintError> {
         let limbs_segment = vm.add_memory_segment();
 
         // Write the 8 limbs to the new segment
@@ -58,13 +63,13 @@ impl<'de> serde::Deserialize<'de> for KeccakBytes {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
-    {   
+    {
         let s = String::deserialize(deserializer)?;
         KeccakBytes::from_any_str(&s).map_err(serde::de::Error::custom)
     }
 }
 
-impl serde::Serialize for KeccakBytes { 
+impl serde::Serialize for KeccakBytes {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
