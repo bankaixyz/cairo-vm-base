@@ -6,7 +6,7 @@
 // - Vector deserialization for arrays of values
 #[cfg(test)]
 mod serde_tests {
-    use crate::types::{felt, uint256, uint256_32, uint384};
+    use crate::types::{felt, keccak_bytes, uint256, uint256_32, uint384};
     use serde::Deserialize;
 
     // Test structs - now clean without any serde attributes!
@@ -28,6 +28,11 @@ mod serde_tests {
     #[derive(Debug, Deserialize, PartialEq)]
     struct Uint256Bits32Wrapper {
         value: uint256_32::Uint256Bits32,
+    }
+
+    #[derive(Debug, Deserialize, PartialEq)]
+    struct KeccakBytesWrapper {
+        value: keccak_bytes::KeccakBytes,
     }
 
     #[derive(Debug, Deserialize, PartialEq)]
@@ -382,6 +387,49 @@ mod serde_tests {
             let json = r#"{"value": "0xYYYY"}"#;
             let result: Result<Uint256Bits32Wrapper, _> = serde_json::from_str(json);
             assert!(result.is_err());
+        }
+    }
+
+    mod keccak_bytes_tests {
+        use super::*;
+        use serde_json;
+
+        #[test]
+        fn test_keccak_bytes_deserialize_from_hex_string() {
+            let json = r#"{"value": "0x1a2b3c"}"#;
+            let wrapper: KeccakBytesWrapper = serde_json::from_str(json).unwrap();
+            assert_eq!(wrapper.value.0, vec![0x1a, 0x2b, 0x3c]);
+        }
+
+        #[test]
+        fn test_keccak_bytes_deserialize_with_underscores_and_odd_len() {
+            let json = r#"{"value": "0x1a_2b_c"}"#;
+            let wrapper: KeccakBytesWrapper = serde_json::from_str(json).unwrap();
+            assert_eq!(wrapper.value.0, vec![0x01, 0xa2, 0xbc]);
+        }
+
+        #[test]
+        fn test_keccak_bytes_deserialize_number_errors() {
+            let json = r#"{"value": 123}"#;
+            let result: Result<KeccakBytesWrapper, _> = serde_json::from_str(json);
+            assert!(result.is_err());
+        }
+
+        #[test]
+        fn test_keccak_bytes_serialize() {
+            let kb = keccak_bytes::KeccakBytes(vec![0x00, 0x01, 0xff]);
+            let json = serde_json::to_string(&kb).unwrap();
+            assert_eq!(json, "\"0x0001ff\"");
+        }
+
+        #[test]
+        fn test_keccak_bytes_deserialize_long_hex_string() {
+            // 64 bytes of 0xab
+            let long_hex = format!("0x{}", "ab".repeat(93));
+            let json = format!(r#"{{"value": "{long_hex}"}}"#);
+            let wrapper: KeccakBytesWrapper = serde_json::from_str(&json).unwrap();
+            assert_eq!(wrapper.value.0.len(), 93);
+            assert!(wrapper.value.0.iter().all(|b| *b == 0xab));
         }
     }
 

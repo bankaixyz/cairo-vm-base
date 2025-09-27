@@ -1,4 +1,5 @@
 pub mod felt;
+pub mod keccak_bytes;
 pub mod uint256;
 pub mod uint256_32;
 pub mod uint384;
