@@ -550,7 +550,8 @@ dependencies = [
 [[package]]
 name = "cairo-vm"
 version = "3.0.0-rc.3"
-source = "git+https://github.com/lambdaclass/cairo-vm?tag=v3.0.0-rc.3#7d0cb7e32e487fc65ee9aba92bf22a22267679ea"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c96021ea68138094428e3d8dab21a504b23adc084363c89caaa7f6bda51dc251"
 dependencies = [
  "anyhow",
  "ark-ff 0.4.2",

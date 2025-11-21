@@ -4,12 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-cairo-vm = { git = "https://github.com/lambdaclass/cairo-vm", tag = "v3.0.0-rc.3", features = [
-    "extensive_hints",
-    "clap",
-    "cairo-1-hints",
-    "mod_builtin",
-] }
+cairo-vm = { version = "=3.0.0-rc.3", features = ["extensive_hints", "mod_builtin", "clap", "cairo-1-hints"] }
 num-bigint = "0.4.6"
 num-traits = "0.2.19"
 alloy-primitives = "0.8.13"
