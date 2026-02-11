@@ -15,7 +15,7 @@ pub const PRINT_FELT: &str = "print(f\"{ids.value}\")";
 pub const PRINT_STRING: &str = "print(f\"String: {ids.value}\")";
 pub const PRINT_UINT256: &str = "print(f\"{hex(ids.value.high * 2 ** 128 + ids.value.low)}\")";
 pub const PRINT_UINT384: &str =
-    "print(f\"{hex(ids.value.d3 * 2 ** 144 + ids.value.d2 * 2 ** 96 + ids.value.d1 * 2 ** 48 + ids.value.d0)}\")";
+    "print(f\"{hex(ids.value.d3 * 2 ** 288 + ids.value.d2 * 2 ** 192 + ids.value.d1 * 2 ** 96 + ids.value.d0)}\")";
 
 pub fn print_felt_hex(
     vm: &mut VirtualMachine,
@@ -97,11 +97,21 @@ pub fn print_uint384(
         let d1 = vm.get_integer((ptr + 1)?)?;
         let d2 = vm.get_integer((ptr + 2)?)?;
         let d3 = vm.get_integer((ptr + 3)?)?;
+        let d0_bytes = d0.to_bytes_be();
+        let d1_bytes = d1.to_bytes_be();
+        let d2_bytes = d2.to_bytes_be();
+        let d3_bytes = d3.to_bytes_be();
+
+        let d0_96 = &d0_bytes[d0_bytes.len().saturating_sub(12)..];
+        let d1_96 = &d1_bytes[d1_bytes.len().saturating_sub(12)..];
+        let d2_96 = &d2_bytes[d2_bytes.len().saturating_sub(12)..];
+        let d3_96 = &d3_bytes[d3_bytes.len().saturating_sub(12)..];
+
         let mut bytes = Vec::new();
-        bytes.extend_from_slice(&d3.to_bytes_be());
-        bytes.extend_from_slice(&d2.to_bytes_be());
-        bytes.extend_from_slice(&d1.to_bytes_be());
-        bytes.extend_from_slice(&d0.to_bytes_be());
+        bytes.extend_from_slice(d3_96);
+        bytes.extend_from_slice(d2_96);
+        bytes.extend_from_slice(d1_96);
+        bytes.extend_from_slice(d0_96);
         println!("Value: 0x{}", hex::encode(bytes));
     }
     Ok(())
@@ -111,13 +121,13 @@ pub const INFO_FELT: &str = "print(f\"Info: {ids.value}\")";
 pub const INFO_FELT_HEX: &str = "print(f\"Info: {hex(ids.value)}\")";
 pub const INFO_STRING: &str = "print(f\"Info: {ids.value}\")";
 pub const INFO_UINT256: &str = "print(f\"Info: {hex(ids.value.high * 2**128 + ids.value.low)}\")";
-pub const INFO_UINT384: &str = "print(f\"Info: {hex(ids.value.d3 * 2 ** 144 + ids.value.d2 * 2 ** 96 + ids.value.d1 * 2 ** 48 + ids.value.d0)}\")";
+pub const INFO_UINT384: &str = "print(f\"Info: {hex(ids.value.d3 * 2 ** 288 + ids.value.d2 * 2 ** 192 + ids.value.d1 * 2 ** 96 + ids.value.d0)}\")";
 
 pub const DEBUG_FELT: &str = "print(f\"Debug: {ids.value}\")";
 pub const DEBUG_FELT_HEX: &str = "print(f\"Debug: {hex(ids.value)}\")";
 pub const DEBUG_STRING: &str = "print(f\"Debug: {ids.value}\")";
 pub const DEBUG_UINT256: &str = "print(f\"Debug: {hex(ids.value.high * 2**128 + ids.value.low)}\")";
-pub const DEBUG_UINT384: &str = "print(f\"Debug: {hex(ids.value.d3 * 2 ** 144 + ids.value.d2 * 2 ** 96 + ids.value.d1 * 2 ** 48 + ids.value.d0)}\")";
+pub const DEBUG_UINT384: &str = "print(f\"Debug: {hex(ids.value.d3 * 2 ** 288 + ids.value.d2 * 2 ** 192 + ids.value.d1 * 2 ** 96 + ids.value.d0)}\")";
 
 pub fn info_felt(
     vm: &mut VirtualMachine,
@@ -214,11 +224,21 @@ pub fn info_uint384(
             let d1 = vm.get_integer((ptr + 1)?)?;
             let d2 = vm.get_integer((ptr + 2)?)?;
             let d3 = vm.get_integer((ptr + 3)?)?;
+            let d0_bytes = d0.to_bytes_be();
+            let d1_bytes = d1.to_bytes_be();
+            let d2_bytes = d2.to_bytes_be();
+            let d3_bytes = d3.to_bytes_be();
+
+            let d0_96 = &d0_bytes[d0_bytes.len().saturating_sub(12)..];
+            let d1_96 = &d1_bytes[d1_bytes.len().saturating_sub(12)..];
+            let d2_96 = &d2_bytes[d2_bytes.len().saturating_sub(12)..];
+            let d3_96 = &d3_bytes[d3_bytes.len().saturating_sub(12)..];
+
             let mut bytes = Vec::new();
-            bytes.extend_from_slice(&d3.to_bytes_be());
-            bytes.extend_from_slice(&d2.to_bytes_be());
-            bytes.extend_from_slice(&d1.to_bytes_be());
-            bytes.extend_from_slice(&d0.to_bytes_be());
+            bytes.extend_from_slice(d3_96);
+            bytes.extend_from_slice(d2_96);
+            bytes.extend_from_slice(d1_96);
+            bytes.extend_from_slice(d0_96);
             println!("Info: 0x{}", hex::encode(bytes));
         }
     }
@@ -320,11 +340,21 @@ pub fn debug_uint384(
             let d1 = vm.get_integer((ptr + 1)?)?;
             let d2 = vm.get_integer((ptr + 2)?)?;
             let d3 = vm.get_integer((ptr + 3)?)?;
+            let d0_bytes = d0.to_bytes_be();
+            let d1_bytes = d1.to_bytes_be();
+            let d2_bytes = d2.to_bytes_be();
+            let d3_bytes = d3.to_bytes_be();
+
+            let d0_96 = &d0_bytes[d0_bytes.len().saturating_sub(12)..];
+            let d1_96 = &d1_bytes[d1_bytes.len().saturating_sub(12)..];
+            let d2_96 = &d2_bytes[d2_bytes.len().saturating_sub(12)..];
+            let d3_96 = &d3_bytes[d3_bytes.len().saturating_sub(12)..];
+
             let mut bytes = Vec::new();
-            bytes.extend_from_slice(&d3.to_bytes_be());
-            bytes.extend_from_slice(&d2.to_bytes_be());
-            bytes.extend_from_slice(&d1.to_bytes_be());
-            bytes.extend_from_slice(&d0.to_bytes_be());
+            bytes.extend_from_slice(d3_96);
+            bytes.extend_from_slice(d2_96);
+            bytes.extend_from_slice(d1_96);
+            bytes.extend_from_slice(d0_96);
             println!("Debug: 0x{}", hex::encode(bytes));
         }
     }
